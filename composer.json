@@ -14,7 +14,7 @@
     "symfony/yaml": "^6.4 || ^7.1",
     "tourze/enum-extra": "0.0.*",
     "tourze/json-rpc-core": "^0.0.6",
-    "tourze/json-rpc-lock-bundle": "^0.0.6",
+    "tourze/json-rpc-lock-bundle": "0.0.*",
     "tourze/http-client-bundle": "0.0.*",
     "tourze/wechat-work-bundle": "0.0.*",
     "nesbot/carbon": "^2.72 || ^3"
