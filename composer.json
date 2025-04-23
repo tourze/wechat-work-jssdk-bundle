@@ -12,7 +12,7 @@
     "symfony/http-kernel": "^6.4",
     "symfony/framework-bundle": "^6.4",
     "symfony/yaml": "^6.4 || ^7.1",
-    "tourze/enum-extra": "0.0.*",
+    "tourze/enum-extra": "~0.0.5",
     "tourze/json-rpc-core": "^0.0.6",
     "tourze/json-rpc-lock-bundle": "0.0.*",
     "tourze/http-client-bundle": "0.0.*",
