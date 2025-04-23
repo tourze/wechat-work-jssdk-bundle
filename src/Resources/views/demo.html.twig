@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" src="https://lf26-cdn-tos.bytecdntp.com/cdn/expire-1-M/twitter-bootstrap/3.4.1/css/bootstrap.min.css" />
+    <link rel="stylesheet" src="https://lf9-cdn-tos.bytecdntp.com/cdn/expire-1-M/twitter-bootstrap/3.4.1/css/bootstrap-theme.min.css" />
+    <script src="https://lf6-cdn-tos.bytecdntp.com/cdn/expire-1-M/jquery/1.11.1/jquery.min.js"></script>
+    <script src="https://lf6-cdn-tos.bytecdntp.com/cdn/expire-1-M/twitter-bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <script src="//res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
+    <script src="https://open.work.weixin.qq.com/wwopen/js/jwxwork-1.0.0.js"></script>
+</head>
+
+<body>
+<span style="font-size: 14px;color: #999999;">客户名称为: </span><span style="font-size: 14px;" class="zzzz"></span><br />
+<span style="font-size: 14px;color: #999999;">看房状态为: </span><span style="font-size: 14px;" class="zzz"></span>
+</body>
+
+<script>
+    let timestamp = String((new Date()).getTime()).slice(0, 10)
+    // alert("timestamp");
+    // alert(timestamp)
+    fetch(`https://fj2test.l-helper.cn/api/kfMsg/getMsgSignatureByNose?type=config&noncestr=random&url=https://teambuilding.l-helper.cn/2.html&timestamp=${timestamp}`)
+        .then(response => response.text())
+        .then(result => {
+            // alert('企业微信的tecket');
+            // alert(result)
+            wx.config({
+                beta: true,// 必须这么写，否则wx.invoke调用形式的jsapi会有问题
+                debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+                appId: 'wwd4de90158e82728e', // 必填，企业微信的corpID
+                timestamp: timestamp, // 必填，生成签名的时间戳
+                nonceStr: 'random', // 必填，生成签名的随机串
+                signature: result,// 必填，签名，见 附录-JS-SDK使用权限签名算法
+                jsApiList: ['getCurExternalContact', 'selectExternalContact', 'sendChatMessage'] // 必填，需要使用的JS接口列表，凡是要调用的接口都需要传进来
+            })
+            zz()
+        })
+
+
+    function zz() {
+        wx.error(function (res) {
+            alert("config验证错误");
+        });
+        wx.ready(function () {
+            // alert("config验证通过");
+            fetch(`https://fj2test.l-helper.cn/api/kfMsg/getMsgSignatureByNose?type=agentConfig&noncestr=random&url=https://teambuilding.l-helper.cn/2.html&timestamp=${timestamp}`)
+                .then(response => response.text())
+                .then(result => {
+                    // alert('应用的tecket');
+                    // alert(result)
+                    wx.agentConfig({
+                        corpid: 'wwd4de90158e82728e', // 必填，企业微信的corpid，必须与当前登录的企业一致
+                        agentid: 1000006, // 必填，企业微信的应用id （e.g. 1000247）
+                        timestamp: timestamp, // 必填，生成签名的时间戳
+                        nonceStr: 'random', // 必填，生成签名的随机串
+                        signature: result,// 必填，签名，见附录-JS-SDK使用权限签名算法
+                        jsApiList: ['selectExternalContact', 'getCurExternalContact'], //必填，传入需要使用的接口名称
+                        success: function (res) {
+                            // wx.invoke('getContext', {
+                            // }, function (res) {
+                            //   if (res.err_msg == "getContext:ok") {
+                            //     entry = res.entry; //返回进入H5页面的入口类型，目前有normal、contact_profile、single_chat_tools、group_chat_tools、chat_attachment
+                            //     shareTicket = res.shareTicket; //可用于调用getShareInfo接口
+                            //   } else {
+                            //     alert("获取入口错误");
+                            //     //错误处理
+                            //   }
+                            // });
+                            wx.invoke('getCurExternalContact', {
+                            }, function (res) {
+                                if (res.err_msg == "getCurExternalContact:ok") {
+                                    userId = res.userId;
+                                    fetch(`https://fj2test.l-helper.cn/api/kfMsg/getUserState/${userId}`)
+                                        .then(response => response.json())
+                                        .then(result => {
+                                            let dom1 = document.querySelector('.zzzz')
+                                            let dom = document.querySelector('.zzz')
+                                            switch (result.state) {
+                                                case 0:
+                                                    dom.innerHTML = '未沟通'
+                                                    dom1.innerHTML = result.name
+                                                    break;
+                                                case 1:
+                                                    dom.innerHTML = '已聊天'
+                                                    dom1.innerHTML = result.name
+                                                    break;
+                                                case 2:
+                                                    dom.innerHTML = '已看房'
+                                                    dom1.innerHTML = result.name
+                                                    break;
+                                                case 3:
+                                                    dom.innerHTML = '已成交'
+                                                    dom1.innerHTML = result.name
+                                                    break;
+                                                default:
+
+                                            }
+                                        })
+                                } else {
+                                    alert("请求Userid时发送错误");
+                                }
+                            });
+                        },
+                        fail: function (ress) {
+                            if (ress.errMsg.indexOf('function not exist') > -1) {
+                                alert('版本过低请升级')
+                            }
+                            alert("验证agentConfig时错误", ress);
+                        }
+                    });
+                })
+        });
+    }
+
+</script>
+
+</html>

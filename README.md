@@ -1,1 +1,1 @@
-# wechat-work-jssdk-bundle
+# 企业微信-JSSDK
