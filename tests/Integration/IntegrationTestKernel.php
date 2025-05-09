@@ -31,9 +31,6 @@ class IntegrationTestKernel extends BaseKernel
             'php_errors' => [
                 'log' => true,
             ],
-            'validation' => [
-                'email_validation_mode' => 'html5',
-            ],
         ]);
     }
 
