@@ -3,13 +3,22 @@
 namespace WechatWorkJssdkBundle\Tests\Enum;
 
 use PHPUnit\Framework\TestCase;
+use Tourze\EnumExtra\Itemable;
+use Tourze\EnumExtra\Labelable;
+use Tourze\EnumExtra\Selectable;
 use WechatWorkJssdkBundle\Enum\ContextEntry;
 
 class ContextEntryTest extends TestCase
 {
-    public function testEnumValues(): void
+    public function test_implements_required_interfaces(): void
     {
-        // 测试所有枚举值是否存在且正确
+        $this->assertInstanceOf(Labelable::class, ContextEntry::NORMAL);
+        $this->assertInstanceOf(Itemable::class, ContextEntry::NORMAL);
+        $this->assertInstanceOf(Selectable::class, ContextEntry::NORMAL);
+    }
+
+    public function test_enum_values(): void
+    {
         $this->assertEquals('contact_profile', ContextEntry::CONTACT_PROFILE->value);
         $this->assertEquals('single_chat_tools', ContextEntry::SINGLE_CHAT_TOOLS->value);
         $this->assertEquals('group_chat_tools', ContextEntry::GROUP_CHAT_TOOLS->value);
@@ -18,9 +27,8 @@ class ContextEntryTest extends TestCase
         $this->assertEquals('normal', ContextEntry::NORMAL->value);
     }
 
-    public function testGetLabel(): void
+    public function test_enum_labels(): void
     {
-        // 测试每个枚举的标签是否正确
         $this->assertEquals('从联系人详情进入', ContextEntry::CONTACT_PROFILE->getLabel());
         $this->assertEquals('从单聊会话的工具栏进入', ContextEntry::SINGLE_CHAT_TOOLS->getLabel());
         $this->assertEquals('从群聊会话的工具栏进入', ContextEntry::GROUP_CHAT_TOOLS->getLabel());
@@ -29,45 +37,59 @@ class ContextEntryTest extends TestCase
         $this->assertEquals('除以上场景之外进入，例如工作台，聊天会话等', ContextEntry::NORMAL->getLabel());
     }
 
-    public function testEnumCases(): void
+    public function test_all_cases_covered(): void
     {
-        // 测试获取所有枚举项
-        $cases = ContextEntry::cases();
+        $expectedCases = [
+            'CONTACT_PROFILE',
+            'SINGLE_CHAT_TOOLS',
+            'GROUP_CHAT_TOOLS',
+            'CHAT_ATTACHMENT',
+            'SINGLE_KF_TOOLS',
+            'NORMAL'
+        ];
         
-        $this->assertCount(6, $cases);
-        $this->assertContains(ContextEntry::CONTACT_PROFILE, $cases);
-        $this->assertContains(ContextEntry::SINGLE_CHAT_TOOLS, $cases);
-        $this->assertContains(ContextEntry::GROUP_CHAT_TOOLS, $cases);
-        $this->assertContains(ContextEntry::CHAT_ATTACHMENT, $cases);
-        $this->assertContains(ContextEntry::SINGLE_KF_TOOLS, $cases);
-        $this->assertContains(ContextEntry::NORMAL, $cases);
+        $actualCases = array_map(fn($case) => $case->name, ContextEntry::cases());
+        
+        $this->assertEquals($expectedCases, $actualCases);
+        $this->assertCount(6, ContextEntry::cases());
     }
 
-    public function testSelectItems(): void
+    public function test_from_string_value(): void
     {
-        // 使用getItem方法构建类似selectItems的数据，用于测试
-        $items = [];
-        foreach (ContextEntry::cases() as $case) {
-            $items[] = [
-                'value' => $case->value,
-                'label' => $case->getLabel(),
-            ];
-        }
+        $this->assertEquals(ContextEntry::NORMAL, ContextEntry::from('normal'));
+        $this->assertEquals(ContextEntry::CONTACT_PROFILE, ContextEntry::from('contact_profile'));
+    }
+
+    /**
+     * @dataProvider invalidValueProvider
+     */
+    public function test_from_invalid_value_throws_exception(string $invalidValue): void
+    {
+        $this->expectException(\ValueError::class);
         
-        $this->assertCount(6, $items);
-        
-        // 检查第一项的结构
-        $firstItem = $items[0];
-        $this->assertArrayHasKey('value', $firstItem);
-        $this->assertArrayHasKey('label', $firstItem);
-        
-        // 检查特定项的内容
-        $normalItem = array_filter($items, function($item) {
-            return $item['value'] === 'normal';
-        });
-        
-        $this->assertNotEmpty($normalItem);
-        $normalItem = reset($normalItem);
-        $this->assertEquals('除以上场景之外进入，例如工作台，聊天会话等', $normalItem['label']);
+        ContextEntry::from($invalidValue);
+    }
+
+    public static function invalidValueProvider(): array
+    {
+        return [
+            ['invalid'],
+            [''],
+            ['contact'],
+            ['normal_invalid'],
+        ];
+    }
+
+    public function test_tryFrom_valid_values(): void
+    {
+        $this->assertEquals(ContextEntry::NORMAL, ContextEntry::tryFrom('normal'));
+        $this->assertEquals(ContextEntry::CONTACT_PROFILE, ContextEntry::tryFrom('contact_profile'));
+    }
+
+    public function test_tryFrom_invalid_values(): void
+    {
+        $this->assertNull(ContextEntry::tryFrom('invalid'));
+        $this->assertNull(ContextEntry::tryFrom(''));
+        $this->assertNull(ContextEntry::tryFrom('contact'));
     }
 } 

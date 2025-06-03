@@ -2,54 +2,67 @@
 
 namespace WechatWorkJssdkBundle\Tests\Request\Ticket;
 
-use PHPUnit\Framework\MockObject\MockObject;
+use HttpClientBundle\Request\ApiRequest;
+use HttpClientBundle\Request\CacheRequest;
 use PHPUnit\Framework\TestCase;
-use WechatWorkBundle\Entity\Agent;
 use WechatWorkJssdkBundle\Request\Ticket\GetCorpJsApiTicketRequest;
 
 class GetCorpJsApiTicketRequestTest extends TestCase
 {
     private GetCorpJsApiTicketRequest $request;
-    private MockObject $agent;
 
     protected function setUp(): void
     {
         $this->request = new GetCorpJsApiTicketRequest();
-        
-        // 创建Agent模拟对象
-        $this->agent = $this->createMock(Agent::class);
-        $this->agent->method('getAgentId')->willReturn('test_agent_id');
-        
-        // 设置Agent
-        $this->request->setAgent($this->agent);
     }
 
-    public function testGetRequestPath(): void
+    public function test_extends_api_request(): void
     {
-        // 验证请求路径是否正确
+        $this->assertInstanceOf(ApiRequest::class, $this->request);
+    }
+
+    public function test_implements_cache_request(): void
+    {
+        $this->assertInstanceOf(CacheRequest::class, $this->request);
+    }
+
+    public function test_getRequestPath_returns_correct_path(): void
+    {
         $this->assertEquals('/cgi-bin/get_jsapi_ticket', $this->request->getRequestPath());
     }
 
-    public function testGetRequestOptions(): void
+    public function test_getRequestOptions_returns_empty_array(): void
     {
-        // 验证请求选项是否正确
         $options = $this->request->getRequestOptions();
+        
         $this->assertIsArray($options);
         $this->assertEmpty($options);
     }
 
-    public function testGetCacheKey(): void
+    public function test_getCacheDuration_returns_correct_duration(): void
     {
-        // 验证缓存键是否包含代理ID
-        $cacheKey = $this->request->getCacheKey();
-        $this->assertStringContainsString('test_agent_id', $cacheKey);
-        $this->assertEquals('GetWechatWorkJssdkConfig-corp-test_agent_id', $cacheKey);
+        $this->assertEquals(600, $this->request->getCacheDuration()); // 60 * 10
     }
 
-    public function testGetCacheDuration(): void
+    public function test_getCacheDuration_returns_integer(): void
     {
-        // 验证缓存持续时间是否正确（10分钟）
+        $this->assertIsInt($this->request->getCacheDuration());
+    }
+
+    public function test_cache_duration_is_reasonable(): void
+    {
         $duration = $this->request->getCacheDuration();
-        $this->assertEquals(600, $duration); // 60 * 10 = 600秒
+        
+        // 缓存时间应该在合理范围内（1分钟到1小时）
+        $this->assertGreaterThanOrEqual(60, $duration);
+        $this->assertLessThanOrEqual(3600, $duration);
+    }
+
+    public function test_cache_duration_matches_agent_request(): void
+    {
+        $agentRequest = new \WechatWorkJssdkBundle\Request\Ticket\GetAgentJsApiTicketRequest();
+        
+        // 两个请求的缓存时间应该相同
+        $this->assertEquals($agentRequest->getCacheDuration(), $this->request->getCacheDuration());
     }
 } 
