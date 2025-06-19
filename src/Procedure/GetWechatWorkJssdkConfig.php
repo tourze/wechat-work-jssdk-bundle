@@ -2,7 +2,6 @@
 
 namespace WechatWorkJssdkBundle\Procedure;
 
-use Carbon\Carbon;
 use Tourze\JsonRPC\Core\Attribute\MethodDoc;
 use Tourze\JsonRPC\Core\Attribute\MethodExpose;
 use Tourze\JsonRPC\Core\Attribute\MethodParam;
@@ -44,7 +43,7 @@ class GetWechatWorkJssdkConfig extends LockableProcedure
         $corp = $this->corpRepository->findOneBy([
             'corpId' => $this->corpId,
         ]);
-        if (!$corp) {
+        if ($corp === null) {
             throw new ApiException('找不到企业信息');
         }
 
@@ -52,7 +51,7 @@ class GetWechatWorkJssdkConfig extends LockableProcedure
             'corp' => $corp,
             'agentId' => $this->agentId,
         ]);
-        if (!$agent) {
+        if ($agent === null) {
             throw new ApiException('找不到应用信息');
         }
 

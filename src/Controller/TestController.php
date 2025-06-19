@@ -42,7 +42,7 @@ class TestController extends AbstractController
     protected function getAgent(Request $request): AccessTokenAware
     {
         $corp = $this->corpRepository->find($request->query->get('corpId'));
-        if (!$corp) {
+        if ($corp === null) {
             $corp = $this->corpRepository->findOneBy([
                 'corpId' => $request->query->get('corpId'),
             ]);
