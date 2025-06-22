@@ -2,6 +2,7 @@
 
 namespace WechatWorkJssdkBundle\Procedure;
 
+use Carbon\CarbonImmutable;
 use Tourze\JsonRPC\Core\Attribute\MethodDoc;
 use Tourze\JsonRPC\Core\Attribute\MethodExpose;
 use Tourze\JsonRPC\Core\Attribute\MethodParam;
@@ -56,7 +57,7 @@ class GetWechatWorkJssdkConfig extends LockableProcedure
         }
 
         $noncestr = uniqid();
-        $timestamp = Carbon::now()->getTimestamp();
+        $timestamp = CarbonImmutable::now()->getTimestamp();
 
         $request = new GetCorpJsApiTicketRequest();
         $request->setAgent($agent);

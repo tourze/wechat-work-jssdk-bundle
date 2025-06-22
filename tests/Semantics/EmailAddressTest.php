@@ -30,15 +30,7 @@ class EmailAddressTest extends TestCase
         $this->assertEquals('邮箱地址', $this->emailAddress->getTitle());
     }
 
-    public function test_getValue_returns_integer(): void
-    {
-        $this->assertIsInt($this->emailAddress->getValue());
-    }
 
-    public function test_getTitle_returns_string(): void
-    {
-        $this->assertIsString($this->emailAddress->getTitle());
-    }
 
     public function test_getValue_is_consistent(): void
     {

@@ -13,7 +13,7 @@ class SemanticsList implements SelectDataFetcher
     {
     }
 
-    public function genSelectData(): array
+    public function genSelectData(): iterable
     {
         $result = [];
         foreach ($this->providers as $item) {

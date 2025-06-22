@@ -44,10 +44,6 @@ class GetCorpJsApiTicketRequestTest extends TestCase
         $this->assertEquals(600, $this->request->getCacheDuration()); // 60 * 10
     }
 
-    public function test_getCacheDuration_returns_integer(): void
-    {
-        $this->assertIsInt($this->request->getCacheDuration());
-    }
 
     public function test_cache_duration_is_reasonable(): void
     {

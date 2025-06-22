@@ -7,14 +7,13 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use WechatWorkBundle\Entity\AccessTokenAware;
+use Tourze\WechatWorkContracts\AgentInterface;
 use WechatWorkBundle\Repository\AgentRepository;
 use WechatWorkBundle\Repository\CorpRepository;
 use WechatWorkBundle\Service\WorkService;
 use WechatWorkJssdkBundle\Request\Session\GetLaunchCodeRequest;
 
-#[Route(path: '/wechat/work/test')]
-class TestController extends AbstractController
+class LaunchCodeController extends AbstractController
 {
     public function __construct(
         private readonly CorpRepository $corpRepository,
@@ -23,23 +22,23 @@ class TestController extends AbstractController
     ) {
     }
 
-    #[Route(path: '/launch-code/{name}')]
-    public function launchCode(string $name, Request $request): Response
+    #[Route(path: '/wechat/work/test/launch-code/{name}')]
+    public function __invoke(string $name, Request $request): Response
     {
         $agent = $this->getAgent($request);
 
-        $request = new GetLaunchCodeRequest();
-        $request->setAgent($agent);
-        $request->setOperatorUserId('dev@gzcrm.cn');
-        $request->setSingleChat([
+        $launchCodeRequest = new GetLaunchCodeRequest();
+        $launchCodeRequest->setAgent($agent);
+        $launchCodeRequest->setOperatorUserId('dev@gzcrm.cn');
+        $launchCodeRequest->setSingleChat([
             'userid' => $name,
         ]);
-        $response = $this->workService->request($request);
+        $response = $this->workService->request($launchCodeRequest);
 
         return new Response("wxwork://launch?launch_code={$response['launch_code']}");
     }
 
-    protected function getAgent(Request $request): AccessTokenAware
+    protected function getAgent(Request $request): ?AgentInterface
     {
         $corp = $this->corpRepository->find($request->query->get('corpId'));
         if ($corp === null) {
@@ -59,11 +58,5 @@ class TestController extends AbstractController
         return $this->agentRepository->findOneBy([
             'corp' => $corp,
         ], ['id' => Criteria::ASC]);
-    }
-
-    #[Route(path: '/jssdk')]
-    public function jssdk(): Response
-    {
-        return $this->render('@WechatWorkJssdk/demo.html.twig');
     }
 }

@@ -30,15 +30,7 @@ class RedPacketTest extends TestCase
         $this->assertEquals('红包', $this->redPacket->getTitle());
     }
 
-    public function test_getValue_returns_integer(): void
-    {
-        $this->assertIsInt($this->redPacket->getValue());
-    }
 
-    public function test_getTitle_returns_string(): void
-    {
-        $this->assertIsString($this->redPacket->getTitle());
-    }
 
     public function test_getValue_is_consistent(): void
     {

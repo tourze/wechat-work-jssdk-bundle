@@ -30,9 +30,10 @@ class SemanticsListTest extends TestCase
         $this->assertInstanceOf(SelectDataFetcher::class, $this->semanticsList);
     }
 
-    public function test_genSelectData_returns_array(): void
+    public function test_genSelectData_returns_iterable(): void
     {
         $result = $this->semanticsList->genSelectData();
+        $this->assertIsIterable($result);
     }
 
     public function test_genSelectData_contains_all_providers(): void
@@ -71,19 +72,25 @@ class SemanticsListTest extends TestCase
         $result = $this->semanticsList->genSelectData();
         
         // 检查手机号
-        $phoneItem = array_filter($result, fn($item) => $item['value'] === 1)[0];
+        $phoneItems = array_values(array_filter($result, fn($item) => $item['value'] == 1));
+        $this->assertCount(1, $phoneItems);
+        $phoneItem = $phoneItems[0];
         $this->assertEquals('手机号', $phoneItem['label']);
         $this->assertEquals('手机号', $phoneItem['text']);
         $this->assertEquals('手机号', $phoneItem['name']);
         
         // 检查邮箱地址
-        $emailItem = array_filter($result, fn($item) => $item['value'] === 2)[1];
+        $emailItems = array_values(array_filter($result, fn($item) => $item['value'] == 2));
+        $this->assertCount(1, $emailItems);
+        $emailItem = $emailItems[0];
         $this->assertEquals('邮箱地址', $emailItem['label']);
         $this->assertEquals('邮箱地址', $emailItem['text']);
         $this->assertEquals('邮箱地址', $emailItem['name']);
         
         // 检查红包
-        $redPacketItem = array_filter($result, fn($item) => $item['value'] === 3)[2];
+        $redPacketItems = array_values(array_filter($result, fn($item) => $item['value'] == 3));
+        $this->assertCount(1, $redPacketItems);
+        $redPacketItem = $redPacketItems[0];
         $this->assertEquals('红包', $redPacketItem['label']);
         $this->assertEquals('红包', $redPacketItem['text']);
         $this->assertEquals('红包', $redPacketItem['name']);

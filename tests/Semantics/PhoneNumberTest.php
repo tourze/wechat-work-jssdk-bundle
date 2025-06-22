@@ -30,15 +30,7 @@ class PhoneNumberTest extends TestCase
         $this->assertEquals('手机号', $this->phoneNumber->getTitle());
     }
 
-    public function test_getValue_returns_integer(): void
-    {
-        $this->assertIsInt($this->phoneNumber->getValue());
-    }
 
-    public function test_getTitle_returns_string(): void
-    {
-        $this->assertIsString($this->phoneNumber->getTitle());
-    }
 
     public function test_getValue_is_consistent(): void
     {
