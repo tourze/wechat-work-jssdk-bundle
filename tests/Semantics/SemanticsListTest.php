@@ -30,10 +30,10 @@ class SemanticsListTest extends TestCase
         $this->assertInstanceOf(SelectDataFetcher::class, $this->semanticsList);
     }
 
-    public function test_genSelectData_returns_iterable(): void
+    public function test_genSelectData_returns_array(): void
     {
         $result = $this->semanticsList->genSelectData();
-        $this->assertIsIterable($result);
+        $this->assertIsArray($result);
     }
 
     public function test_genSelectData_contains_all_providers(): void

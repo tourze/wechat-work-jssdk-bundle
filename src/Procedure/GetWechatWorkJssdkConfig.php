@@ -18,18 +18,18 @@ use WechatWorkJssdkBundle\Request\Ticket\GetCorpJsApiTicketRequest;
 /**
  * @see https://developer.work.weixin.qq.com/document/path/90506
  */
-#[MethodTag('企业微信')]
-#[MethodDoc('(企业)获取config接口注入权限验证配置')]
-#[MethodExpose('GetWechatWorkJssdkConfig')]
+#[MethodTag(name: '企业微信')]
+#[MethodDoc(summary: '(企业)获取config接口注入权限验证配置')]
+#[MethodExpose(method: 'GetWechatWorkJssdkConfig')]
 class GetWechatWorkJssdkConfig extends LockableProcedure
 {
-    #[MethodParam('企业ID')]
+    #[MethodParam(description: '企业ID')]
     public string $corpId;
 
-    #[MethodParam('应用ID')]
+    #[MethodParam(description: '应用ID')]
     public string $agentId;
 
-    #[MethodParam('当前网页的URL， 不包含#及其后面部分')]
+    #[MethodParam(description: '当前网页的URL， 不包含#及其后面部分')]
     public string $url;
 
     public function __construct(

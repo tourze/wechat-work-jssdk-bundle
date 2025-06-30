@@ -9,7 +9,7 @@ use Tourze\EnumExtra\SelectDataFetcher;
 #[Autoconfigure(public: true)]
 class SemanticsList implements SelectDataFetcher
 {
-    public function __construct(#[TaggedIterator('wechat-work.semantics')] private readonly iterable $providers)
+    public function __construct(#[TaggedIterator(tag: 'wechat-work.semantics')] private readonly iterable $providers)
     {
     }
 

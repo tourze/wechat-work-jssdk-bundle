@@ -4,7 +4,7 @@ namespace WechatWorkJssdkBundle\Semantics;
 
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 
-#[AutoconfigureTag('wechat-work.semantics')]
+#[AutoconfigureTag(name: 'wechat-work.semantics')]
 interface SemanticsInterface
 {
     /**
