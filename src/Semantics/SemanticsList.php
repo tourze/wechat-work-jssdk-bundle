@@ -1,18 +1,26 @@
 <?php
 
+declare(strict_types=1);
+
 namespace WechatWorkJssdkBundle\Semantics;
 
 use Symfony\Component\DependencyInjection\Attribute\Autoconfigure;
-use Symfony\Component\DependencyInjection\Attribute\TaggedIterator;
+use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 use Tourze\EnumExtra\SelectDataFetcher;
 
 #[Autoconfigure(public: true)]
 class SemanticsList implements SelectDataFetcher
 {
-    public function __construct(#[TaggedIterator(tag: 'wechat-work.semantics')] private readonly iterable $providers)
+    /**
+     * @param iterable<SemanticsInterface> $providers
+     */
+    public function __construct(#[AutowireIterator(tag: 'wechat-work.semantics')] private readonly iterable $providers)
     {
     }
 
+    /**
+     * @return array<int, array{label: string, text: string, value: string, name: string}>
+     */
     public function genSelectData(): iterable
     {
         $result = [];
@@ -21,7 +29,7 @@ class SemanticsList implements SelectDataFetcher
             $result[] = [
                 'label' => $item->getTitle(),
                 'text' => $item->getTitle(),
-                'value' => $item->getValue(),
+                'value' => (string) $item->getValue(),
                 'name' => $item->getTitle(),
             ];
         }

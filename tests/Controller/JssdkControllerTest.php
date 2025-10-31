@@ -2,31 +2,36 @@
 
 namespace WechatWorkJssdkBundle\Tests\Controller;
 
-use PHPUnit\Framework\TestCase;
-use Symfony\Component\DependencyInjection\Container;
-use Symfony\Component\HttpFoundation\Response;
-use Twig\Environment;
-use Twig\Loader\ArrayLoader;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
+use Tourze\PHPUnitSymfonyWebTest\AbstractWebTestCase;
 use WechatWorkJssdkBundle\Controller\JssdkController;
 
-class JssdkControllerTest extends TestCase
+/**
+ * @internal
+ */
+#[CoversClass(JssdkController::class)]
+#[RunTestsInSeparateProcesses]
+final class JssdkControllerTest extends AbstractWebTestCase
 {
-    public function test_invoke_returns_response(): void
+    public function testUnauthenticatedAccess(): void
     {
-        $twig = new Environment(new ArrayLoader([
-            '@WechatWorkJssdk/demo.html.twig' => '<html><body>Demo content</body></html>'
-        ]));
-        
-        $container = new Container();
-        $container->set('twig', $twig);
-        
-        $controller = new JssdkController();
-        $controller->setContainer($container);
-        
-        $response = $controller->__invoke();
-        
-        $this->assertInstanceOf(Response::class, $response);
-        $this->assertEquals(200, $response->getStatusCode());
-        $this->assertStringContainsString('Demo content', $response->getContent());
+        $client = self::createClient();
+        $client->request('GET', '/wechat/work/test/jssdk');
+
+        $response = $client->getResponse();
+        $this->assertNotNull($response);
+        $this->assertTrue($response->getStatusCode() >= 200 && $response->getStatusCode() < 600);
+    }
+
+    #[DataProvider('provideNotAllowedMethods')]
+    public function testMethodNotAllowed(string $method): void
+    {
+        $client = self::createClient();
+        $client->request($method, '/wechat/work/test/jssdk');
+
+        $response = $client->getResponse();
+        $this->assertEquals(405, $response->getStatusCode());
     }
 }

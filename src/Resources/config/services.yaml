@@ -1,8 +1,33 @@
 services:
-  # default configuration for services in *this* file
   _defaults:
-    autowire: true      # Automatically injects dependencies in your services.
-    autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+    autowire: true
+    autoconfigure: true
+
+  WechatWorkJssdkBundle\Controller\:
+    resource: '../../Controller/'
+
+  WechatWorkJssdkBundle\Service\:
+    resource: '../../Service/'
 
   WechatWorkJssdkBundle\Procedure\:
     resource: '../../Procedure/'
+
+  # 语义相关服务
+  WechatWorkJssdkBundle\Semantics\SemanticsList:
+    autowire: true
+
+  WechatWorkJssdkBundle\Semantics\PhoneNumber:
+    tags: ['wechat-work.semantics']
+
+  WechatWorkJssdkBundle\Semantics\EmailAddress:
+    tags: ['wechat-work.semantics']
+
+  WechatWorkJssdkBundle\Semantics\RedPacket:
+    tags: ['wechat-work.semantics']
+
+  # 外部依赖的可选配置
+  WechatWorkJssdkBundle\Controller\LaunchCodeController:
+    arguments:
+      $corpRepository: '@?WechatWorkBundle\Repository\CorpRepository'
+      $agentRepository: '@?WechatWorkBundle\Repository\AgentRepository'
+      $workService: '@?WechatWorkBundle\Service\WorkService'

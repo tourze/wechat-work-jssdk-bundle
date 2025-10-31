@@ -1,10 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace WechatWorkJssdkBundle\Request\Ticket;
 
 use HttpClientBundle\Request\ApiRequest;
 use HttpClientBundle\Request\CacheRequest;
 use WechatWorkBundle\Request\AgentAware;
+use WechatWorkJssdkBundle\Exception\AgentNotSetException;
 
 /**
  * 获取应用的jsapi_ticket
@@ -34,7 +37,10 @@ class GetAgentJsApiTicketRequest extends ApiRequest implements CacheRequest
         return '/cgi-bin/ticket/get';
     }
 
-    public function getRequestOptions(): ?array
+    /**
+     * @return array{query: array{type: 'agent_config'}}
+     */
+    public function getRequestOptions(): array
     {
         return [
             'query' => [
@@ -45,7 +51,12 @@ class GetAgentJsApiTicketRequest extends ApiRequest implements CacheRequest
 
     public function getCacheKey(): string
     {
-        return "GetWechatWorkJssdkConfig-agent-{$this->getAgent()->getAgentId()}";
+        $agent = $this->getAgent();
+        if (null === $agent) {
+            throw new AgentNotSetException('Agent is not set');
+        }
+
+        return "GetWechatWorkJssdkConfig-agent-{$agent->getAgentId()}";
     }
 
     public function getCacheDuration(): int

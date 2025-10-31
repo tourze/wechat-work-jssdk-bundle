@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace WechatWorkJssdkBundle\Semantics;
 
 class EmailAddress implements SemanticsInterface

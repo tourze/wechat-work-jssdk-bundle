@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace WechatWorkJssdkBundle\Procedure;
 
 use Carbon\CarbonImmutable;
@@ -44,7 +46,7 @@ class GetWechatWorkJssdkConfig extends LockableProcedure
         $corp = $this->corpRepository->findOneBy([
             'corpId' => $this->corpId,
         ]);
-        if ($corp === null) {
+        if (null === $corp) {
             throw new ApiException('找不到企业信息');
         }
 
@@ -52,7 +54,7 @@ class GetWechatWorkJssdkConfig extends LockableProcedure
             'corp' => $corp,
             'agentId' => $this->agentId,
         ]);
-        if ($agent === null) {
+        if (null === $agent) {
             throw new ApiException('找不到应用信息');
         }
 
@@ -61,6 +63,7 @@ class GetWechatWorkJssdkConfig extends LockableProcedure
 
         $request = new GetCorpJsApiTicketRequest();
         $request->setAgent($agent);
+        /** @var array{ticket: string} $response */
         $response = $this->workService->request($request);
         $ticket = $response['ticket'];
 
@@ -68,7 +71,7 @@ class GetWechatWorkJssdkConfig extends LockableProcedure
         $signature = sha1($signStr);
         $corpConfig = [
             'beta' => true, // 必须这么写，否则wx.invoke调用形式的jsapi会有问题
-            'appId' => $agent->getCorp()->getCorpId(),
+            'appId' => $corp->getCorpId(),
             'timestamp' => $timestamp,
             'nonceStr' => $noncestr,
             'signature' => $signature,
@@ -76,13 +79,14 @@ class GetWechatWorkJssdkConfig extends LockableProcedure
 
         $request = new GetAgentJsApiTicketRequest();
         $request->setAgent($agent);
+        /** @var array{ticket: string} $response */
         $response = $this->workService->request($request);
         $ticket = $response['ticket'];
 
         $signStr = "jsapi_ticket={$ticket}&noncestr={$noncestr}&timestamp={$timestamp}&url={$this->url}";
         $signature = sha1($signStr);
         $agentConfig = [
-            'corpid' => $agent->getCorp()->getCorpId(),
+            'corpid' => $corp->getCorpId(),
             'agentid' => $agent->getAgentId(),
             'timestamp' => $timestamp,
             'nonceStr' => $noncestr,

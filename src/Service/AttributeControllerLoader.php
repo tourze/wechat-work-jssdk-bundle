@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace WechatWorkJssdkBundle\Service;
 
 use Symfony\Bundle\FrameworkBundle\Routing\AttributeRouteControllerLoader;
@@ -31,6 +33,7 @@ class AttributeControllerLoader extends Loader implements RoutingAutoLoaderInter
         $collection = new RouteCollection();
         $collection->addCollection($this->controllerLoader->load(JssdkController::class));
         $collection->addCollection($this->controllerLoader->load(LaunchCodeController::class));
+
         return $collection;
     }
 

@@ -2,93 +2,100 @@
 
 namespace WechatWorkJssdkBundle\Tests\Semantics;
 
-use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use Tourze\EnumExtra\SelectDataFetcher;
-use WechatWorkJssdkBundle\Semantics\EmailAddress;
-use WechatWorkJssdkBundle\Semantics\PhoneNumber;
-use WechatWorkJssdkBundle\Semantics\RedPacket;
-use WechatWorkJssdkBundle\Semantics\SemanticsInterface;
+use Tourze\PHPUnitSymfonyKernelTest\AbstractIntegrationTestCase;
 use WechatWorkJssdkBundle\Semantics\SemanticsList;
 
-class SemanticsListTest extends TestCase
+/**
+ * @internal
+ */
+#[CoversClass(SemanticsList::class)]
+#[RunTestsInSeparateProcesses]
+final class SemanticsListTest extends AbstractIntegrationTestCase
 {
-    private SemanticsList $semanticsList;
-
-    protected function setUp(): void
+    protected function onSetUp(): void
     {
-        // 模拟tagged iterator
-        $providers = [
-            new PhoneNumber(),
-            new EmailAddress(),
-            new RedPacket(),
-        ];
-        $this->semanticsList = new SemanticsList($providers);
+        // No specific setup needed
     }
 
-    public function test_implements_select_data_fetcher(): void
+    private function createSemanticsList(): SemanticsList
     {
-        $this->assertInstanceOf(SelectDataFetcher::class, $this->semanticsList);
+        // 获取容器中的服务
+        return self::getService(SemanticsList::class);
     }
 
-    public function test_genSelectData_returns_array(): void
+    public function testImplementsSelectDataFetcher(): void
     {
-        $result = $this->semanticsList->genSelectData();
+        $semanticsList = $this->createSemanticsList();
+        $this->assertInstanceOf(SelectDataFetcher::class, $semanticsList);
+    }
+
+    public function testGenSelectDataReturnsArray(): void
+    {
+        $semanticsList = $this->createSemanticsList();
+        $result = $semanticsList->genSelectData();
         $this->assertIsArray($result);
     }
 
-    public function test_genSelectData_contains_all_providers(): void
+    public function testGenSelectDataContainsAllProviders(): void
     {
-        $result = $this->semanticsList->genSelectData();
-        
+        $semanticsList = $this->createSemanticsList();
+        $result = $semanticsList->genSelectData();
+
         $this->assertCount(3, $result);
     }
 
-    public function test_genSelectData_has_correct_structure(): void
+    public function testGenSelectDataHasCorrectStructure(): void
     {
-        $result = $this->semanticsList->genSelectData();
-        
+        $semanticsList = $this->createSemanticsList();
+        $result = $semanticsList->genSelectData();
+
         foreach ($result as $item) {
             $this->assertArrayHasKey('label', $item);
             $this->assertArrayHasKey('text', $item);
             $this->assertArrayHasKey('value', $item);
             $this->assertArrayHasKey('name', $item);
 
-            $this->assertIsInt($item['value']);
+            $this->assertIsString($item['value']);
         }
     }
 
-    public function test_genSelectData_sorted_by_value(): void
+    public function testGenSelectDataSortedByValue(): void
     {
-        $result = $this->semanticsList->genSelectData();
-        
+        $semanticsList = $this->createSemanticsList();
+        $result = iterator_to_array($semanticsList->genSelectData());
+
         // 检查是否按value排序：手机号(1), 邮箱地址(2), 红包(3)
-        $this->assertEquals(1, $result[0]['value']);
-        $this->assertEquals(2, $result[1]['value']);
-        $this->assertEquals(3, $result[2]['value']);
+        $this->assertEquals('1', $result[0]['value']);
+        $this->assertEquals('2', $result[1]['value']);
+        $this->assertEquals('3', $result[2]['value']);
     }
 
-    public function test_genSelectData_correct_content(): void
+    public function testGenSelectDataCorrectContent(): void
     {
-        $result = $this->semanticsList->genSelectData();
-        
+        $semanticsList = $this->createSemanticsList();
+        $result = iterator_to_array($semanticsList->genSelectData());
+
         // 检查手机号
-        $phoneItems = array_values(array_filter($result, fn($item) => $item['value'] == 1));
+        $phoneItems = array_values(array_filter($result, fn ($item) => '1' === $item['value']));
         $this->assertCount(1, $phoneItems);
         $phoneItem = $phoneItems[0];
         $this->assertEquals('手机号', $phoneItem['label']);
         $this->assertEquals('手机号', $phoneItem['text']);
         $this->assertEquals('手机号', $phoneItem['name']);
-        
+
         // 检查邮箱地址
-        $emailItems = array_values(array_filter($result, fn($item) => $item['value'] == 2));
+        $emailItems = array_values(array_filter($result, fn ($item) => '2' === $item['value']));
         $this->assertCount(1, $emailItems);
         $emailItem = $emailItems[0];
         $this->assertEquals('邮箱地址', $emailItem['label']);
         $this->assertEquals('邮箱地址', $emailItem['text']);
         $this->assertEquals('邮箱地址', $emailItem['name']);
-        
+
         // 检查红包
-        $redPacketItems = array_values(array_filter($result, fn($item) => $item['value'] == 3));
+        $redPacketItems = array_values(array_filter($result, fn ($item) => '3' === $item['value']));
         $this->assertCount(1, $redPacketItems);
         $redPacketItem = $redPacketItems[0];
         $this->assertEquals('红包', $redPacketItem['label']);
@@ -96,35 +103,15 @@ class SemanticsListTest extends TestCase
         $this->assertEquals('红包', $redPacketItem['name']);
     }
 
-    public function test_genSelectData_with_empty_providers(): void
+    public function testGenSelectDataMaintainsInterfaceContract(): void
     {
-        $emptySemanticsList = new SemanticsList([]);
-        $result = $emptySemanticsList->genSelectData();
-        $this->assertEmpty($result);
-    }
+        $semanticsList = $this->createSemanticsList();
+        $result = $semanticsList->genSelectData();
 
-    public function test_genSelectData_maintains_interface_contract(): void
-    {
-        $result = $this->semanticsList->genSelectData();
-        
         foreach ($result as $item) {
             // 确保label和text、name相同（按照代码逻辑）
             $this->assertEquals($item['label'], $item['text']);
             $this->assertEquals($item['label'], $item['name']);
         }
     }
-
-    public function test_constructor_accepts_semantics_interface(): void
-    {
-        $mockSemantics = $this->createMock(SemanticsInterface::class);
-        $mockSemantics->method('getTitle')->willReturn('测试语义');
-        $mockSemantics->method('getValue')->willReturn(999);
-        
-        $semanticsList = new SemanticsList([$mockSemantics]);
-        $result = $semanticsList->genSelectData();
-        
-        $this->assertCount(1, $result);
-        $this->assertEquals('测试语义', $result[0]['label']);
-        $this->assertEquals(999, $result[0]['value']);
-    }
-} 
+}

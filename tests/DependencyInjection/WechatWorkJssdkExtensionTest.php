@@ -1,56 +1,56 @@
 <?php
 
+declare(strict_types=1);
+
 namespace WechatWorkJssdkBundle\Tests\DependencyInjection;
 
-use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\CoversClass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\ExtensionInterface;
+use Tourze\PHPUnitSymfonyUnitTest\AbstractDependencyInjectionExtensionTestCase;
 use WechatWorkJssdkBundle\DependencyInjection\WechatWorkJssdkExtension;
 
-class WechatWorkJssdkExtensionTest extends TestCase
+/**
+ * @internal
+ */
+#[CoversClass(WechatWorkJssdkExtension::class)]
+final class WechatWorkJssdkExtensionTest extends AbstractDependencyInjectionExtensionTestCase
 {
-    private WechatWorkJssdkExtension $extension;
-    private ContainerBuilder $container;
-
-    protected function setUp(): void
+    public function testImplementsExtensionInterface(): void
     {
-        $this->extension = new WechatWorkJssdkExtension();
-        $this->container = new ContainerBuilder();
+        $extension = new WechatWorkJssdkExtension();
+        $this->assertInstanceOf(ExtensionInterface::class, $extension);
     }
 
-    public function test_implements_extension_interface(): void
+    public function testLoadWithEmptyConfig(): void
     {
-        $this->assertInstanceOf(ExtensionInterface::class, $this->extension);
+        $container = new ContainerBuilder();
+        $container->setParameter('kernel.environment', 'test');
+        $extension = new WechatWorkJssdkExtension();
+
+        $extension->load([], $container);
+
+        // 验证容器中至少有一些服务定义被加载
+        $this->assertNotEmpty($container->getDefinitions());
     }
 
-    public function test_load_with_empty_config(): void
+    public function testGetAlias(): void
     {
-        $this->extension->load([], $this->container);
-        
-        // 应该能正常加载而不抛出异常
-        $this->assertTrue(true);
+        $extension = new WechatWorkJssdkExtension();
+        $this->assertEquals('wechat_work_jssdk', $extension->getAlias());
     }
 
-    public function test_load_services_configuration(): void
+    public function testContainerCompilation(): void
     {
-        $this->extension->load([], $this->container);
-        
-        // 检查是否有服务定义被加载
-        $this->assertGreaterThan(0, count($this->container->getDefinitions()));
-    }
+        $container = new ContainerBuilder();
+        $container->setParameter('kernel.environment', 'test');
+        $extension = new WechatWorkJssdkExtension();
 
-    public function test_get_alias(): void
-    {
-        $this->assertEquals('wechat_work_jssdk', $this->extension->getAlias());
-    }
+        $extension->load([], $container);
 
-    public function test_container_compilation(): void
-    {
-        $this->extension->load([], $this->container);
-        
         // 应该能正常编译而不抛出异常
-        $this->container->compile();
-        
-        $this->assertTrue($this->container->isCompiled());
+        $container->compile();
+
+        $this->assertTrue($container->isCompiled());
     }
-} 
+}

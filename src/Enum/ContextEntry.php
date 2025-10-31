@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace WechatWorkJssdkBundle\Enum;
 
 use Tourze\EnumExtra\Itemable;
@@ -15,9 +17,8 @@ use Tourze\EnumExtra\SelectTrait;
  */
 enum ContextEntry: string implements Labelable, Itemable, Selectable
 {
-    use ItemTrait;
     use SelectTrait;
-
+    use ItemTrait;
     case CONTACT_PROFILE = 'contact_profile';
     case SINGLE_CHAT_TOOLS = 'single_chat_tools';
     case GROUP_CHAT_TOOLS = 'group_chat_tools';

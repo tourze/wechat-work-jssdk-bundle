@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace WechatWorkJssdkBundle\Request\Session;
 
 use HttpClientBundle\Request\ApiRequest;
@@ -20,7 +22,7 @@ class GetLaunchCodeRequest extends ApiRequest
     private string $operatorUserId;
 
     /**
-     * @var array 需要发起单聊对象的userid，仅支持企业内部成员
+     * @var array<string, string> 需要发起单聊对象的userid，仅支持企业内部成员
      */
     private array $singleChat = [];
 
@@ -29,7 +31,10 @@ class GetLaunchCodeRequest extends ApiRequest
         return '/cgi-bin/get_launch_code';
     }
 
-    public function getRequestOptions(): ?array
+    /**
+     * @return array{json: array{operator_userid: string, single_chat: array<string, string>}}
+     */
+    public function getRequestOptions(): array
     {
         return [
             'json' => [
@@ -49,11 +54,17 @@ class GetLaunchCodeRequest extends ApiRequest
         $this->operatorUserId = $operatorUserId;
     }
 
+    /**
+     * @return array<string, string>
+     */
     public function getSingleChat(): array
     {
         return $this->singleChat;
     }
 
+    /**
+     * @param array<string, string> $singleChat
+     */
     public function setSingleChat(array $singleChat): void
     {
         $this->singleChat = $singleChat;

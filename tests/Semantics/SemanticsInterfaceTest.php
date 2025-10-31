@@ -2,45 +2,57 @@
 
 namespace WechatWorkJssdkBundle\Tests\Semantics;
 
-use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
+use Tourze\PHPUnitSymfonyKernelTest\AbstractIntegrationTestCase;
 use WechatWorkJssdkBundle\Semantics\SemanticsInterface;
 
-class SemanticsInterfaceTest extends TestCase
+/**
+ * @internal
+ */
+#[CoversClass(SemanticsInterface::class)]
+#[RunTestsInSeparateProcesses]
+final class SemanticsInterfaceTest extends AbstractIntegrationTestCase
 {
-    public function test_interface_exists(): void
+    protected function onSetUp(): void
+    {
+        // No specific setup needed for interface testing
+    }
+
+    public function testInterfaceExists(): void
     {
         $this->assertTrue(interface_exists(SemanticsInterface::class));
     }
 
-    public function test_interface_has_required_methods(): void
+    public function testInterfaceHasRequiredMethods(): void
     {
         $reflection = new \ReflectionClass(SemanticsInterface::class);
-        
+
         $this->assertTrue($reflection->hasMethod('getValue'));
         $this->assertTrue($reflection->hasMethod('getTitle'));
     }
 
-    public function test_getValue_method_signature(): void
+    public function testGetValueMethodSignature(): void
     {
         $reflection = new \ReflectionClass(SemanticsInterface::class);
         $method = $reflection->getMethod('getValue');
-        
+
         $this->assertEquals('getValue', $method->getName());
         $this->assertTrue($method->isPublic());
         $this->assertFalse($method->isStatic());
     }
 
-    public function test_getTitle_method_signature(): void
+    public function testGetTitleMethodSignature(): void
     {
         $reflection = new \ReflectionClass(SemanticsInterface::class);
         $method = $reflection->getMethod('getTitle');
-        
+
         $this->assertEquals('getTitle', $method->getName());
         $this->assertTrue($method->isPublic());
         $this->assertFalse($method->isStatic());
     }
 
-    public function test_interface_can_be_implemented(): void
+    public function testInterfaceCanBeImplemented(): void
     {
         $implementation = new class implements SemanticsInterface {
             public function getValue(): int
@@ -58,4 +70,4 @@ class SemanticsInterfaceTest extends TestCase
         $this->assertEquals(1, $implementation->getValue());
         $this->assertEquals('Test', $implementation->getTitle());
     }
-} 
+}

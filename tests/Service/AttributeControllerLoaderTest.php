@@ -2,47 +2,61 @@
 
 namespace WechatWorkJssdkBundle\Tests\Service;
 
-use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use Symfony\Component\Routing\RouteCollection;
+use Tourze\PHPUnitSymfonyKernelTest\AbstractIntegrationTestCase;
 use WechatWorkJssdkBundle\Service\AttributeControllerLoader;
 
-class AttributeControllerLoaderTest extends TestCase
+/**
+ * @internal
+ */
+#[CoversClass(AttributeControllerLoader::class)]
+#[RunTestsInSeparateProcesses]
+final class AttributeControllerLoaderTest extends AbstractIntegrationTestCase
 {
-    private AttributeControllerLoader $loader;
-
-    protected function setUp(): void
+    protected function onSetUp(): void
     {
-        $this->loader = new AttributeControllerLoader();
+        // No specific setup needed
     }
 
-    public function test_load_returns_route_collection(): void
+    private function createLoader(): AttributeControllerLoader
     {
-        $result = $this->loader->load(null);
+        return self::getService(AttributeControllerLoader::class);
+    }
+
+    public function testLoadReturnsRouteCollection(): void
+    {
+        $loader = $this->createLoader();
+        $result = $loader->load(null);
 
         $this->assertInstanceOf(RouteCollection::class, $result);
         $this->assertGreaterThan(0, $result->count());
     }
 
-    public function test_autoload_returns_route_collection(): void
+    public function testAutoloadReturnsRouteCollection(): void
     {
-        $result = $this->loader->autoload();
+        $loader = $this->createLoader();
+        $result = $loader->autoload();
 
         $this->assertInstanceOf(RouteCollection::class, $result);
         $this->assertGreaterThan(0, $result->count());
     }
 
-    public function test_supports_returns_false(): void
+    public function testSupportsReturnsFalse(): void
     {
-        $this->assertFalse($this->loader->supports('any-resource'));
-        $this->assertFalse($this->loader->supports('any-resource', 'any-type'));
+        $loader = $this->createLoader();
+        $this->assertFalse($loader->supports('any-resource'));
+        $this->assertFalse($loader->supports('any-resource', 'any-type'));
     }
 
-    public function test_autoload_includes_controllers(): void
+    public function testAutoloadIncludesControllers(): void
     {
-        $result = $this->loader->autoload();
+        $loader = $this->createLoader();
+        $result = $loader->autoload();
 
         $routes = $result->all();
-        $routePaths = array_map(static fn($route) => $route->getPath(), $routes);
+        $routePaths = array_map(static fn ($route) => $route->getPath(), $routes);
 
         $this->assertContains('/wechat/work/test/jssdk', $routePaths);
         $this->assertContains('/wechat/work/test/launch-code/{name}', $routePaths);
