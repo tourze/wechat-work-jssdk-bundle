@@ -6,7 +6,7 @@ namespace WechatWorkJssdkBundle\Tests\Request\Ticket;
 
 use HttpClientBundle\Request\ApiRequest;
 use HttpClientBundle\Request\CacheRequest;
-use HttpClientBundle\Tests\Request\RequestTestCase;
+use HttpClientBundle\Test\RequestTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 use WechatWorkJssdkBundle\Request\Ticket\GetAgentJsApiTicketRequest;
 

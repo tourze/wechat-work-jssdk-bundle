@@ -3,7 +3,7 @@
 namespace WechatWorkJssdkBundle\Tests\Request\Session;
 
 use HttpClientBundle\Request\ApiRequest;
-use HttpClientBundle\Tests\Request\RequestTestCase;
+use HttpClientBundle\Test\RequestTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 use WechatWorkJssdkBundle\Request\Session\GetLaunchCodeRequest;
 
