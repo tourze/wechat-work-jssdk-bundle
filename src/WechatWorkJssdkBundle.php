@@ -10,7 +10,7 @@ use Tourze\JsonRPCLockBundle\JsonRPCLockBundle;
 use Tourze\RoutingAutoLoaderBundle\RoutingAutoLoaderBundle;
 use WechatWorkBundle\WechatWorkBundle;
 
-class WechatWorkJssdkBundle extends Bundle implements BundleDependencyInterface
+final class WechatWorkJssdkBundle extends Bundle implements BundleDependencyInterface
 {
     public static function getBundleDependencies(): array
     {

@@ -12,7 +12,7 @@ use WechatWorkBundle\Request\AgentAware;
  *
  * @see https://developer.work.weixin.qq.com/document/path/94346
  */
-class GetLaunchCodeRequest extends ApiRequest
+final class GetLaunchCodeRequest extends ApiRequest
 {
     use AgentAware;
 

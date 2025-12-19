@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace WechatWorkJssdkBundle\Semantics;
 
-class PhoneNumber implements SemanticsInterface
+final class PhoneNumber implements SemanticsInterface
 {
     public function getValue(): int
     {

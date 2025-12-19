@@ -9,7 +9,7 @@ use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 use Tourze\EnumExtra\SelectDataFetcher;
 
 #[Autoconfigure(public: true)]
-class SemanticsList implements SelectDataFetcher
+final class SemanticsList implements SelectDataFetcher
 {
     /**
      * @param iterable<SemanticsInterface> $providers

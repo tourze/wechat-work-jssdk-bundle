@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace WechatWorkJssdkBundle\Semantics;
 
-class RedPacket implements SemanticsInterface
+final class RedPacket implements SemanticsInterface
 {
     public function getValue(): int
     {

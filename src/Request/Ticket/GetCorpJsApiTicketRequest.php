@@ -18,7 +18,7 @@ use WechatWorkJssdkBundle\Exception\AgentNotSetException;
  *
  * @see https://developer.work.weixin.qq.com/document/path/90506
  */
-class GetCorpJsApiTicketRequest extends ApiRequest implements CacheRequest
+final class GetCorpJsApiTicketRequest extends ApiRequest implements CacheRequest
 {
     use AgentAware;
 

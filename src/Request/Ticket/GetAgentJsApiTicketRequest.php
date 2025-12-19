@@ -28,7 +28,7 @@ use WechatWorkJssdkBundle\Exception\AgentNotSetException;
  * @see https://developer.work.weixin.qq.com/document/path/90506
  * @see https://developer.work.weixin.qq.com/document/14932 通过agentConfig注入应用的权限
  */
-class GetAgentJsApiTicketRequest extends ApiRequest implements CacheRequest
+final class GetAgentJsApiTicketRequest extends ApiRequest implements CacheRequest
 {
     use AgentAware;
 

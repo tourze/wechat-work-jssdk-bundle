@@ -13,7 +13,7 @@ use WechatWorkJssdkBundle\Controller\JssdkController;
 use WechatWorkJssdkBundle\Controller\LaunchCodeController;
 
 #[AutoconfigureTag(name: 'routing.loader')]
-class AttributeControllerLoader extends Loader implements RoutingAutoLoaderInterface
+final class AttributeControllerLoader extends Loader implements RoutingAutoLoaderInterface
 {
     private AttributeRouteControllerLoader $controllerLoader;
 

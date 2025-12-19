@@ -4,8 +4,8 @@ namespace WechatWorkJssdkBundle\Tests\Procedure;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
-use Tourze\JsonRPC\Core\Tests\AbstractProcedureTestCase;
 use Tourze\JsonRPCLockBundle\Procedure\LockableProcedure;
+use Tourze\PHPUnitJsonRPC\AbstractProcedureTestCase;
 use WechatWorkJssdkBundle\Procedure\GetWechatWorkJssdkConfig;
 
 /**
@@ -31,18 +31,30 @@ final class GetWechatWorkJssdkConfigTest extends AbstractProcedureTestCase
     {
         $reflection = new \ReflectionClass(GetWechatWorkJssdkConfig::class);
 
-        $this->assertTrue($reflection->hasProperty('corpId'));
-        $this->assertTrue($reflection->hasProperty('agentId'));
-        $this->assertTrue($reflection->hasProperty('url'));
+        // 检查构造函数参数（依赖注入）
+        $constructor = $reflection->getConstructor();
+        $this->assertNotNull($constructor);
 
-        // 检查属性的可见性
-        $corpIdProperty = $reflection->getProperty('corpId');
-        $agentIdProperty = $reflection->getProperty('agentId');
-        $urlProperty = $reflection->getProperty('url');
+        $parameters = $constructor->getParameters();
+        $this->assertCount(4, $parameters);
 
-        $this->assertTrue($corpIdProperty->isPublic());
-        $this->assertTrue($agentIdProperty->isPublic());
-        $this->assertTrue($urlProperty->isPublic());
+        // 检查构造函数参数类型
+        $userManagerParam = $parameters[0];
+        $corpRepositoryParam = $parameters[1];
+        $agentRepositoryParam = $parameters[2];
+        $workServiceParam = $parameters[3];
+
+        $this->assertEquals('userManager', $userManagerParam->getName());
+        $this->assertFalse($userManagerParam->isOptional());
+
+        $this->assertEquals('corpRepository', $corpRepositoryParam->getName());
+        $this->assertTrue($corpRepositoryParam->isOptional());
+
+        $this->assertEquals('agentRepository', $agentRepositoryParam->getName());
+        $this->assertTrue($agentRepositoryParam->isOptional());
+
+        $this->assertEquals('workService', $workServiceParam->getName());
+        $this->assertTrue($workServiceParam->isOptional());
     }
 
     public function testHasExecuteMethod(): void
@@ -55,20 +67,6 @@ final class GetWechatWorkJssdkConfigTest extends AbstractProcedureTestCase
         $this->assertTrue($method->isPublic());
     }
 
-    public function testConstructorHasCorrectParameters(): void
-    {
-        $reflection = new \ReflectionClass(GetWechatWorkJssdkConfig::class);
-        $constructor = $reflection->getConstructor();
-
-        $this->assertNotNull($constructor);
-        $this->assertCount(3, $constructor->getParameters());
-
-        $parameters = $constructor->getParameters();
-        $this->assertEquals('corpRepository', $parameters[0]->getName());
-        $this->assertEquals('agentRepository', $parameters[1]->getName());
-        $this->assertEquals('workService', $parameters[2]->getName());
-    }
-
     public function testExecute(): void
     {
         $reflection = new \ReflectionClass(GetWechatWorkJssdkConfig::class);
@@ -79,9 +77,9 @@ final class GetWechatWorkJssdkConfigTest extends AbstractProcedureTestCase
         $returnType = $executeMethod->getReturnType();
         if (null !== $returnType) {
             $typeName = $returnType instanceof \ReflectionNamedType ? $returnType->getName() : (string) $returnType;
-            $this->assertEquals('array', $typeName);
+            $this->assertEquals('Tourze\JsonRPC\Core\Result\ArrayResult', $typeName);
         }
 
-        $this->assertCount(0, $executeMethod->getParameters());
+        $this->assertCount(1, $executeMethod->getParameters());
     }
 }

@@ -8,8 +8,8 @@
     "nesbot/carbon": "^2.72 || ^3",
     "symfony/config": "^7.3",
     "symfony/dependency-injection": "^7.3",
-    "symfony/framework-bundle": "^7.3",
-    "symfony/http-foundation": "^7.3",
+    "symfony/framework-bundle": "^7.4",
+    "symfony/http-foundation": "^7.4",
     "symfony/http-kernel": "^7.3",
     "symfony/property-access": "^7.3",
     "symfony/routing": "^7.3",
@@ -17,7 +17,7 @@
     "tourze/bundle-dependency": "1.*",
     "tourze/enum-extra": "1.0.*",
     "tourze/http-client-bundle": "1.1.*",
-    "tourze/json-rpc-core": "1.0.*",
+    "tourze/json-rpc-core": "2.0.*",
     "tourze/json-rpc-lock-bundle": "1.0.*",
     "tourze/symfony-dependency-service-loader": "1.0.*",
     "tourze/symfony-routing-auto-loader-bundle": "1.0.*",
@@ -38,9 +38,10 @@
     "tourze/doctrine-async-insert-bundle": "1.0.*",
     "tourze/phpunit-base": "1.*",
     "tourze/phpunit-enum": "1.*",
-    "tourze/phpunit-symfony-kernel-test": "1.0.*",
-    "tourze/phpunit-symfony-unit-test": "1.*",
-    "tourze/phpunit-symfony-web-test": "1.*"
+    "tourze/phpunit-json-rpc": "1.0.*",
+    "tourze/phpunit-symfony-kernel-test": "2.0.*",
+    "tourze/phpunit-symfony-unit-test": "2.0.*",
+    "tourze/phpunit-symfony-web-test": "2.0.*"
   },
   "autoload": {
     "psr-4": {
